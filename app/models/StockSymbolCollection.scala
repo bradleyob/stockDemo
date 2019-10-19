@@ -1,5 +1,6 @@
 package models
 
+import java.io.FileNotFoundException
 import java.math.BigDecimal
 
 import yahoofinance.{Stock, YahooFinance}
@@ -9,7 +10,12 @@ case class StockSymbolCollection(stocks: mutable.Map[String, StockData])
 
 object StockSymbolCollection {
  def getData(symbol: String): StockData = {
-  val symbolData: Stock= YahooFinance.get(symbol)
-  StockData(symbol, symbolData.getName, symbolData.getQuote().getPrice)
+   try {
+     val symbolData = YahooFinance.get(symbol)
+     StockData(symbol, symbolData.getName, symbolData.getQuote().getPrice)
+   } catch {
+     // Return a dummy that indicates the symbol was invalid
+     case e: FileNotFoundException => StockData(symbol, "Invalid Ticker Symbol")
+  }
  }
 }
