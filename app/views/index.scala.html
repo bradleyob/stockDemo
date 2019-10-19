@@ -1,0 +1,26 @@
+@()(implicit request: RequestHeader)
+<html>
+<head>
+    <title>Stocks</title>
+    <link rel="stylesheet" media="screen" href="@routes.Assets.versioned("stylesheets/main.css")">
+    <link rel="stylesheet" href='@routes.Assets.versioned("lib/skeleton-css/css/skeleton.css")'>
+    <link rel="shortcut icon" type="image/png" href="@routes.Assets.versioned("images/favicon.png")">
+    <script type='text/javascript' src='@routes.Assets.versioned("lib/jquery/jquery.js")'></script>
+    <script type='text/javascript' src='@routes.Assets.versioned("lib/requirejs/require.js")'></script>
+    <script type='text/javascript' src='@routes.Assets.versioned("javascripts/index.js")'></script>
+    <script type='text/javascript' src='@routes.Assets.versioned("lib/react/cjs/react.development.js")'></script>
+</head>
+<body data-ws-url="@routes.HomeController.ws.webSocketURL()">
+    <div class="navbar navbar-inverse navbar-fixed-top">
+        <div class="navbar-inner">
+            <div class="container">
+            </div>
+        </div>
+    </div>
+
+    <div id="stocks" class="container">
+
+    </div>
+</body>
+</html>
+
