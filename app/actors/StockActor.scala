@@ -1,20 +1,13 @@
 package actors
 import akka.actor._
-import akka.pattern.ask
 import akka.util.Timeout
-
-import scala.concurrent.duration._
-import scala.collection.mutable
+import models.{SendStocks, StockData, StockSymbol, StockSymbolCollection}
 import play.api.Logger
-import java.math.BigDecimal
-
-import akka.Done
-import akka.stream.scaladsl.Sink
-import models.StockSymbolCollection
-import models.StockData
+import play.api.libs.functional.syntax._
 import play.api.libs.json._
 
-import scala.concurrent.Future
+import scala.collection.mutable
+import scala.concurrent.duration._
 
 object StockActor {
   def props(out: ActorRef) = Props(new StockActor(out))
@@ -24,12 +17,14 @@ class StockActor(out: ActorRef) extends Actor with ActorLogging {
   // Set up some static data for displaying Stocks when a user has not provided any
   var stocksC: StockSymbolCollection = StockSymbolCollection(mutable.Map("GOOGL" -> StockData(), "AAPL" -> StockData()))
 
-  implicit val stockWrites: Writes[StockData] = new Writes[StockData] {
-    override def writes(o: StockData): JsValue = Json.obj(s"symbol"-> o.symbol,  s"name" -> o.name, s"price" -> o.price.toPlainString)
-  }
+  implicit val stockWrites: Writes[StockData] = (o: StockData) => Json.obj(
+    s"symbol" -> o.symbol,
+    s"name" -> o.name,
+    s"price" -> o.price.toPlainString
+  )
 
-  // Single case classes aren't supported with Read.. so map it
-  implicit val stockReads: Reads[StockSymbol] =  (__ \ "symbol").read[String].map(symbol => StockSymbol(symbol))
+  implicit val StockReads: Reads[StockSymbol] = ((JsPath  \ "symbol").read[String] and
+    (JsPath \ "action").read[String])(StockSymbol.apply _)
 
 
   // Poll for new stock quotes every second
@@ -43,12 +38,20 @@ class StockActor(out: ActorRef) extends Actor with ActorLogging {
     // We were given a new set of symbols to work with
     case tickerSymbol: JsValue =>
       val symbol = tickerSymbol.as[StockSymbol]
-
-      Logger.info("Fetching with updated symbol " + symbol.symbol)
-      // Update and fire to websocket
-      stocksC.stocks += (symbol.symbol -> StockData())
-      updateStocks()
-      out ! Json.toJson(stocksC.stocks)
+      symbol.action match {
+        // An action can be either add or remove
+        case "add" =>
+          Logger.info("Fetching with updated symbol " + symbol.symbol)
+          // Update and fire to websocket
+          stocksC.stocks += (symbol.symbol -> StockData())
+          updateStocks()
+          out ! Json.toJson(stocksC.stocks)
+        case "remove" =>
+          Logger.info("Removing stock " + symbol.symbol)
+          // Mutate our stock collection to remove the marked stock
+          stocksC.stocks.retain(((keepStock,_) => keepStock != symbol.symbol))
+          out ! Json.toJson(stocksC.stocks)
+      }
 
     // Continue to use old set
     case SendStocks =>
@@ -56,10 +59,8 @@ class StockActor(out: ActorRef) extends Actor with ActorLogging {
       updateStocks()
       out ! Json.toJson(stocksC.stocks)
   }
+
   private def updateStocks(): Unit = {
     stocksC.stocks.keys.foreach { symbol => stocksC.stocks.update(symbol, StockSymbolCollection.getData(symbol)) }
   }
 }
-
-case object SendStocks
-case class StockSymbol(symbol: String)

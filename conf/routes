@@ -5,12 +5,10 @@
 
 GET     /                           controllers.HomeController.index
 
-# Map static resources from the /public folder to the /assets URL path
+# Route for our websocket
 GET     /ws                         controllers.HomeController.ws
-#GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)
+# Map static resources from the /public folder to the /assets URL path
 GET      /*file                     controllers.Assets.versioned(path="/public", file: Asset)
 
-# Route for our websocket
-# GET     /stocks/:ticker             controllers.AsyncController.stock(stock: String)
 
       

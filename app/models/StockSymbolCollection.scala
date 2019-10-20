@@ -1,9 +1,8 @@
 package models
 
 import java.io.FileNotFoundException
-import java.math.BigDecimal
 
-import yahoofinance.{Stock, YahooFinance}
+import yahoofinance.YahooFinance
 
 import scala.collection.mutable
 case class StockSymbolCollection(stocks: mutable.Map[String, StockData])
