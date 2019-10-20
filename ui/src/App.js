@@ -62,6 +62,7 @@ class App extends Component {
     render() {
         return (
             <div className="App">
+                <header><h1>Stock App Demo</h1></header>
                <StockList
                    addStock={this.addStock}
                    inputElement={this.inputElement}
