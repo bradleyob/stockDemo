@@ -22,16 +22,16 @@ An actor fetches the stockdata and streams it to the websocket connection.
 Events sent from the page are parsed as JSON and expect a JSON payload of
 ```json
    {
-      "symbol": ticker symbol
-      "action": add | remove
+      "symbol": "symbol"
+      "action": "add | remove"
    } 
 ```
 Events are streamed out in the format:
 
 ```json
   {
-    "symbol1": ["symbol": symbol, "name": name, "price": price],
-    "symbol2": ["symbol": symbol, "name": name, "price": price]
+    "symbol1": ["symbol": "symbol", "name": "name", "price": "price"],
+    "symbol2": ["symbol": "symbol", "name": "name", "price": "price"]
   }
 ```
     
