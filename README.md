@@ -20,7 +20,7 @@ The application utilizes a websocket at http://localhost:9000/ws to stream the s
 An actor fetches the stockdata and streams it to the websocket connection.
 
 Events sent from the page are parsed as JSON and expect a JSON payload of
-```json
+```javascript
    {
       "symbol": "symbol"
       "action": "add | remove"
@@ -28,7 +28,7 @@ Events sent from the page are parsed as JSON and expect a JSON payload of
 ```
 Events are streamed out in the format:
 
-```json
+```javascript
   {
     "symbol1": ["symbol": "symbol", "name": "name", "price": "price"],
     "symbol2": ["symbol": "symbol", "name": "name", "price": "price"]
