@@ -18,5 +18,5 @@ libraryDependencies ++= Seq(
   "org.webjars.bower" % "skeleton-css" % "2.0.4"
 )
 
-unmanagedResourceDirectories in Test <+=  baseDirectory ( _ /"target/web/public/test" )  
+//unmanagedResourceDirectories in Test <+=  baseDirectory ( _ /"target/web/public/test" )  
 
