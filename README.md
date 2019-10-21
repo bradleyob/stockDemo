@@ -5,7 +5,7 @@ Real time stock price update with Websockets and YahooFinance api on Play Scala
 You must have sbt 1.2.8 and node package manager
 
 To build the react assets and push them to the ```public``` directory to be served by Play
-```cd ./ui && npm run build```
+```cd ./ui && npm install && npm run build```
 
 To run the play application
 ```cd ../ && sbt run```
